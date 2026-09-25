@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đêm Hội Trăng Rằm - Trung Thu 3D</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, #03001e, #7303c0, #ec38bc, #fdeff9);
+            background-size: cover;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Mặt Trăng phát sáng */
+        .moon {
+            position: absolute;
+            top: 30px;
+            width: 130px;
+            height: 130px;
+            background: #fffdf0;
+            border-radius: 50%;
+            box-shadow: 0 0 40px #ffea79, 0 0 80px #ffea79, 0 0 120px #ffffff;
+            z-index: 1;
+        }
+
+        /* Tiêu đề Trung Thu */
+        .header {
+            margin-top: 180px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            color: #ffea79;
+            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #ffffff;
+            opacity: 0.9;
+        }
+
+        /* Khung hiển thị hình ảnh */
+        .image-card {
+            margin: 15px 0;
+            z-index: 2;
+            border: 3px solid #ffea79;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            max-width: 320px;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Vùng nút chạm giữ vân tay */
+        .fingerprint-wrapper {
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .fingerprint-btn {
+            position: relative;
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 234, 121, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 234, 121, 0.4);
+            transition: transform 0.2s ease;
+        }
+
+        .fingerprint-btn:active {
+            transform: scale(0.92);
+        }
+
+        .fingerprint-icon {
+            width: 45px;
+            height: 45px;
+            fill: #ffea79;
+        }
+
+        /* Vòng tiến trình khi nhấn giữ */
+        .progress-ring {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 89px;
+            height: 89px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring__circle {
+            stroke: #ff0055;
+            stroke-dasharray: 264;
+            stroke-dashoffset: 264;
+            transition: stroke-dashoffset 0.05s linear;
+        }
+
+        .hint-text {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: #ffea79;
+            letter-spacing: 0.5px;
+            animation: blink 1.6s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nhạc nền từ tthu3d/assets/1.mp3 -->
+    <audio id="bgMusic" autoplay loop src="tthu3d/assets/1.mp3"></audio>
+
+    <div class="moon"></div>
+
+    <div class="header">
+        <h1>VUI TẾT TRUNG THU</h1>
+        
+    </div>
+
+    <!-- Hình ảnh đại diện từ tthu3d/assets/1.jpg -->
+    <div class="image-card">
+        <img src="tthu3d/assets/1.jpg" alt="Hình Trung Thu 3D">
+    </div>
+
+    <!-- Nút vân tay ấn giữ -->
+    <div class="fingerprint-wrapper">
+        <div class="fingerprint-btn" id="fingerprintBtn">
+            <svg class="progress-ring">
+                <circle class="progress-ring__circle" stroke-width="4" fill="transparent" r="42" cx="44.5" cy="44.5"/>
+            </svg>
+            <svg class="fingerprint-icon" viewBox="0 0 24 24">
+                <path d="M17.81 4.47c-.08-.07-.17-.13-.26-.19A10.032 10.032 0 0 0 12 3c-2.31 0-4.43.78-6.13 2.1-.2.15-.39.32-.57.5-.1.1-.19.2-.28.31C3.33 7.82 2.5 10.29 2.5 13c0 .88.09 1.74.26 2.57.06.27.32.44.59.38.27-.06.44-.32.38-.59A8.96 8.96 0 0 1 3.5 13c0-2.3.73-4.43 1.97-6.17.07-.1.15-.19.23-.28.15-.16.31-.3.48-.44C7.62 4.95 9.7 4 12 4c1.88 0 3.63.63 5.04 1.71.08.06.16.12.24.18.22.17.53.13.7-.09.17-.22.13-.53-.09-.7-.03-.02-.06-.03-.08-.05zM12 6c-3.87 0-7 3.13-7 7 0 1.25.33 2.43.91 3.46.14.24.44.32.68.18.24-.14.32-.44.18-.68A5.95 5.95 0 0 1 6 13c0-3.31 2.69-6 6-6s6 2.69 6 6c0 1.66-.67 3.16-1.76 4.24-.19.19-.19.51 0 .71.1.1.23.15.35.15s.26-.05.35-.15C18.27 16.62 19 14.89 19 13c0-3.87-3.13-7-7-7zm0 3c-2.21 0-4 1.79-4 4 0 .91.31 1.75.83 2.42.16.21.47.25.68.09.21-.16.25-.47.09-.68A2.94 2.94 0 0 1 9 13c0-1.65 1.35-3 3-3s3 1.35 3 3c0 .88-.38 1.67-.99 2.22-.2.18-.22.49-.04.69.18.2.49.22.69.04C15.42 15.22 16 14.18 16 13c0-2.21-1.79-4-4-4zm0 3c-.55 0-1 .45-1 1 0 .68.25 1.31.67 1.79.18.2.49.21.69.03.2-.18.21-.49.03-.69-.26-.3-.41-.7-.41-1.13 0-.28.22-.5.5-.5s.5.22.5.5c0 .94-.37 1.8-1 2.42-.19.2-.18.51.02.7.1.1.23.15.35.15.13 0 .26-.05.35-.16.8-0.8 1.28-1.9 1.28-3.11 0-.55-.45-1-1-1z"/>
+            </svg>
+        </div>
+        <div class="hint-text">CHẠM VÀ GIỮ VÂN TAY</div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('fingerprintBtn');
+        const circle = document.querySelector('.progress-ring__circle');
+        const audio = document.getElementById('bgMusic');
+        
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = circumference;
+
+        const holdDuration = 1800; // Thời gian giữ (1.8 giây)
+        let startTime = 0;
+        let timer = null;
+
+        // Tự động bật âm thanh khi người dùng tương tác lần đầu
+        const handleFirstInteraction = () => {
+            if (audio && audio.paused) {
+                audio.play().catch(() => {});
+            }
+            window.removeEventListener('touchstart', handleFirstInteraction);
+            window.removeEventListener('click', handleFirstInteraction);
+        };
+        window.addEventListener('touchstart', handleFirstInteraction);
+        window.addEventListener('click', handleFirstInteraction);
+
+        // Bắt đầu ấn giữ
+        function startHold(e) {
+            e.preventDefault();
+            startTime = Date.now();
+            
+            function step() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / holdDuration, 1);
+                circle.style.strokeDashoffset = circumference - (progress * circumference);
+
+                if (progress < 1) {
+                    timer = requestAnimationFrame(step);
+                } else {
+                    // Chuyển hướng tới file index.html nằm trong thư mục tthu3d/
+                    window.location.href = 'tthu3d/index.html';
+                }
+            }
+
+            timer = requestAnimationFrame(step);
+        }
+
+        // Hủy ấn giữ khi nhả tay/chuột
+        function endHold() {
+            if (timer) cancelAnimationFrame(timer);
+            circle.style.strokeDashoffset = circumference;
+        }
+
+        // Đăng ký sự kiện chạm / click
+        btn.addEventListener('mousedown', startHold);
+        btn.addEventListener('mouseup', endHold);
+        btn.addEventListener('mouseleave', endHold);
+
+        btn.addEventListener('touchstart', startHold);
+        btn.addEventListener('touchend', endHold);
+        btn.addEventListener('touchcancel', endHold);
+    </script>
+</body>
+</html>
